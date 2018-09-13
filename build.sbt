@@ -21,6 +21,7 @@ lazy val core = libraryProject("core")
       BuildInfoKey.map(http4sApiVersion) { case (_, v) => "apiVersion" -> v }
     ),
     buildInfoPackage := organization.value,
+    resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
     libraryDependencies ++= Seq(
       cats,
       catsEffect,
@@ -139,6 +140,16 @@ lazy val asyncHttpClient = libraryProject("async-http-client")
   )
   .dependsOn(core, testing % "test->test", client % "compile;test->test")
 
+lazy val jettyClient = libraryProject("jetty-client")
+  .settings(
+    description := "jetty implementation for http4s clients",
+    libraryDependencies ++= Seq(
+      Http4sPlugin.jettyClient
+    ),
+    mimaPreviousArtifacts := Set.empty // remove me once merged
+  )
+  .dependsOn(core, testing % "test->test", client % "compile;test->test")
+
 lazy val okHttpClient = libraryProject("okhttp-client")
   .settings(
     description := "okhttp implementation for http4s clients",
@@ -252,7 +263,7 @@ lazy val playJson = libraryProject("play-json")
     description := "Provides Play json codecs for http4s",
     libraryDependencies ++= Seq(
       jawnPlay,
-      Http4sPlugin.playJson(scalaBinaryVersion.value)
+      Http4sPlugin.playJson
     ),
     mimaPreviousArtifacts := Set.empty // remove me once merged
   )
@@ -335,12 +346,12 @@ lazy val docs = http4sProject("docs")
     unidocProjectFilter in (ScalaUnidoc, unidoc) := inAnyProject --
       inProjects( // TODO would be nice if these could be introspected from noPublishSettings
         bench,
-        examples,
-        examplesBlaze,
-        examplesDocker,
-        examplesJetty,
-        examplesTomcat,
-        examplesWar,
+        // examples,
+        // examplesBlaze,
+        // examplesDocker,
+        // examplesJetty,
+        // examplesTomcat,
+        // examplesWar,
         mimedbGenerator,
         loadTest
       ),
@@ -422,6 +433,7 @@ lazy val website = http4sProject("website")
       }
   )
 
+/**
 lazy val examples = http4sProject("examples")
   .enablePlugins(PrivateProjectPlugin)
   .settings(
@@ -492,7 +504,7 @@ lazy val examplesWar = exampleProject("examples-war")
     containerLibs in Jetty := List(jettyRunner),
   )
   .dependsOn(servlet)
-
+**/
 def http4sProject(name: String) =
   Project(name, file(name))
     .settings(commonSettings)
@@ -504,11 +516,13 @@ def http4sProject(name: String) =
 
 def libraryProject(name: String) = http4sProject(name)
 
+/**
 def exampleProject(name: String) =
   http4sProject(name)
     .in(file(name.replace("examples-", "examples/")))
     .enablePlugins(PrivateProjectPlugin)
     .dependsOn(examples)
+**/
 
 lazy val commonSettings = Seq(
   http4sJvmTarget := scalaVersion.map {
