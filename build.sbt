@@ -534,6 +534,7 @@ lazy val commonSettings = Seq(
   scalacOptions in Compile ++= Seq(
     s"-target:jvm-${http4sJvmTarget.value}"
   ),
+  scalacOptions in Compile -= "-Xfatal-warnings",
   scalacOptions in (Compile, doc) += "-no-link-warnings",
   javacOptions ++= Seq(
     "-source",
