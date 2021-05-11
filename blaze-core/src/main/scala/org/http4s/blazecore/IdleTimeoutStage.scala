@@ -20,7 +20,6 @@ final private[http4s] class IdleTimeoutStage[A](
     exec: TickWheelExecutor,
     ec: ExecutionContext)
     extends MidStage[A, A] { stage =>
-  private[this] val logger = getLogger
 
   @volatile private var cb: Callback[TimeoutException] = null
 

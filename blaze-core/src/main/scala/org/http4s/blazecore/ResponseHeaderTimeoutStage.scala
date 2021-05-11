@@ -21,7 +21,7 @@ final private[http4s] class ResponseHeaderTimeoutStage[A](
     exec: TickWheelExecutor,
     ec: ExecutionContext)
     extends MidStage[A, A] { stage =>
-  private[this] val logger = getLogger
+
   @volatile private[this] var cb: Callback[TimeoutException] = null
 
   private val timeoutState = new AtomicReference[Cancelable](NoOpCancelable)
